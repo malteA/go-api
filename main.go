@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"math/rand"
-	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber"
 )
 
 // Car struct
@@ -19,71 +17,77 @@ type Car struct {
 
 var cars []Car
 
-func getCars(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(cars)
+func getCars(c *fiber.Ctx) {
+	c.JSON(cars)
 }
-func getCar(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
+
+func getCar(c *fiber.Ctx) {
+	id := c.Params("id")
 	for _, item := range cars {
-		if item.ID == params["id"] {
-			json.NewEncoder(w).Encode(item)
+		if item.ID == id {
+			c.JSON(item)
 			return
 		}
 	}
 }
 
-func createCar(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+func createCar(c *fiber.Ctx) {
 	var car Car
-	_ = json.NewDecoder(r.Body).Decode(&car)
+	_ = c.BodyParser(&car)
 	car.ID = strconv.Itoa(rand.Intn(1000))
 	cars = append(cars, car)
-	json.NewEncoder(w).Encode(car)
+	c.JSON(car)
 }
 
-func updateCar(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
+func updateCar(c *fiber.Ctx) {
+	id := c.Params("id")
 	for index, item := range cars {
-		if item.ID == params["id"] {
+		if item.ID == id {
 			cars = append(cars[:index], cars[index+1:]...)
 			var car Car
-			_ = json.NewDecoder(r.Body).Decode(&car)
-			car.ID = params["id"]
+			_ = c.BodyParser(car)
+			car.ID = id
 			cars = append(cars, car)
-			json.NewEncoder(w).Encode(car)
+			c.JSON(car)
 			return
 		}
 	}
 }
-func deleteCar(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
+
+func deleteCar(c *fiber.Ctx) {
+	id := c.Params("id")
 	for index, item := range cars {
-		if item.ID == params["id"] {
+		if item.ID == id {
 			cars = append(cars[:index], cars[index+1:]...)
 			break
 		}
 	}
-	json.NewEncoder(w).Encode(cars)
+	c.JSON(cars)
+}
+
+func setupRoutes(app *fiber.App) {
+	app.Get("/api/car", getCars)
+	app.Get("/api/car/:id", getCar)
+	app.Post("/api/car", createCar)
+	app.Put("/api/car/:id", updateCar)
+	app.Delete("/api/car/:id", deleteCar)
 }
 
 func main() {
 	// iinit router
-	r := mux.NewRouter()
+	app := fiber.New()
 
 	// mock data
 	cars = append(cars, Car{ID: "1", Brand: "Tesla", Make: "Model S"})
 	cars = append(cars, Car{ID: "2", Brand: "VW", Make: "Golf"})
 
+	setupRoutes(app)
 	// routes
-	r.HandleFunc("/api/cars", getCars).Methods("GET")
-	r.HandleFunc("/api/car/{id}", getCar).Methods("GET")
-	r.HandleFunc("/api/cars", createCar).Methods("POST")
-	r.HandleFunc("/api/car/{id}", updateCar).Methods("PUT")
-	r.HandleFunc("/api/car/{id}", deleteCar).Methods("DELETE")
+	// r.HandleFunc("/api/cars", getCars).Methods("GET")
+	// r.HandleFunc("/api/car/{id}", getCar).Methods("GET")
+	// r.HandleFunc("/api/cars", createCar).Methods("POST")
+	// r.HandleFunc("/api/car/{id}", updateCar).Methods("PUT")
+	// r.HandleFunc("/api/car/{id}", deleteCar).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":3000", r))
+	log.Fatal(app.Listen(3000))
 }
