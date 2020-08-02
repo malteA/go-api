@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 
+	swagger "github.com/arsmn/fiber-swagger"
 	"github.com/gofiber/fiber"
 	"github.com/jinzhu/gorm"
 	"github.com/maltea/go-api/car"
 	"github.com/maltea/go-api/database"
+	_ "github.com/maltea/go-api/docs"
 )
 
 func setupRoutes(app *fiber.App) {
@@ -29,8 +31,16 @@ func initDatabase() {
 	log.Println("Automigration completed")
 }
 
+// @title Swagger Car API
+// @version 1.0
+// @description This is a sample golang server with fiber and gorm
+
+// @host localhost:3000
+// @basePath /api
 func main() {
 	app := fiber.New()
+
+	app.Use("/swagger", swagger.Handler)
 
 	initDatabase()
 	defer database.DBConn.Close()

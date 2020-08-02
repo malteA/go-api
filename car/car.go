@@ -16,7 +16,13 @@ type Car struct {
 	Make  string `json:"make"`
 }
 
-// GetCars
+// GetCars godoc
+// @Summary List cars
+// @Description get cars
+// @Tags cars
+// @Produce json
+// @Success 200 {array} Car
+// @Router /car [get]
 func GetCars(c *fiber.Ctx) {
 	db := database.DBConn
 	var cars []Car
@@ -24,7 +30,16 @@ func GetCars(c *fiber.Ctx) {
 	c.JSON(cars)
 }
 
-// GetCar
+// GetCar gooc
+// @Summary Gets all cars
+// @Description get car by ID
+// @Tags cars
+// @Accept json
+// @Produce json
+// @Param id path string true "Car ID"
+// @Success 200 {object} Car
+// @Failure 400
+// @Router /car/{id} [get]
 func GetCar(c *fiber.Ctx) {
 	id := c.Params("id")
 	if id == "" {
@@ -37,6 +52,16 @@ func GetCar(c *fiber.Ctx) {
 	c.JSON(car)
 }
 
+// CreateCar gooc
+// @Summary Create a car
+// @Description create a json car
+// @Tags cars
+// @Accept json
+// @Produce json
+// @Param car body Car true "Add car"
+// @Success 200 {object} Car
+// @Failure 400
+// @Router /car [post]
 func CreateCar(c *fiber.Ctx) {
 	var car Car
 	err := c.BodyParser(&car)
@@ -49,7 +74,17 @@ func CreateCar(c *fiber.Ctx) {
 	c.JSON(car)
 }
 
-// UpdateCar
+// UpdateCar gooc
+// @Summary Update a car
+// @Description update a json car
+// @Tags cars
+// @Accept json
+// @Produce json
+// @Param id path string true "Car ID"
+// @Param car body Car true "Add car"
+// @Success 200 {object} Car
+// @Failure 400
+// @Router /car/{id} [put]
 func UpdateCar(c *fiber.Ctx) {
 	id := c.Params("id")
 	_, parseErr := strconv.Atoi(id)
@@ -72,7 +107,16 @@ func UpdateCar(c *fiber.Ctx) {
 	c.JSON(carUp)
 }
 
-// DeleteCar
+// DeleteCar gooc
+// @Summary Delete a car
+// @Description delete a car by ID
+// @Tags cars
+// @Accept json
+// @Produce json
+// @Param id path string true "Car ID"
+// @Success 200
+// @Failure 400
+// @Router /car/{id} [delete]
 func DeleteCar(c *fiber.Ctx) {
 	id := c.Params("id")
 	if id == "" {
