@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option go_package = "github.com/maltea/go-api/carpb/car;carpb";
+
+package car;
+
+import "google/protobuf/empty.proto";
+
+
+message ListCarsResponse {
+    repeated GetCarResponse cars = 1;
+}
+
+message GetCarRequest {
+    string id = 1;
+}
+message GetCarResponse {
+    string brand = 1;
+    string make = 2;
+}
+
+message CreateCarRequest {
+    string brand = 1;
+    string make = 2;
+}
+message CreateCarResponse {
+    string brand = 1;
+    string make = 2;
+}
+
+message DeleteCarRequest {
+    string id = 1;
+}
+message DeleteCarResponse {}
+
+service carService {
+    rpc ListCars(google.protobuf.Empty) returns (ListCarsResponse) {};
+    rpc GetCar(GetCarRequest) returns (GetCarResponse) {};
+    rpc CreateCar(CreateCarRequest) returns (CreateCarResponse) {};
+    rpc DeleteCar(DeleteCarRequest) returns (DeleteCarResponse) {};
+}

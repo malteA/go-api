@@ -2,25 +2,20 @@
 
 Example Service to manage Cars.
 
-Fiber is used for the REST interaction, GORM to interact with the Database.
-
-API Documentation is done with the help of SWAGGER
-
-| Endpoint                     | Description                         |
-|------------------------------|-------------------------------------|
-| /api/car                | Lists all carss                     |
-| /api/car/1               | Returns car with id 1 if available |
-| /api/car   (POST)        | Adds a new car                     |
-| /api/car/1 (PUT)         | Updates car with id 1 if available |
-| /api/car/1 (DELETE)      | Deletes car with id 1 if available |
+gRPC is used for the interaction, GORM to interact with the Database.
 
 ## Usage
 
-1. Install swag `go get -u github.com/swaggo/swag/cmd/swag`
-2. Add GOPATH to yout PATH to be able to run `swag`
+You can build this programm on your platform by yourself or simply start it with "`go run server/server.go.`". The application opens a socket at the port 3000.
 
-To update the swagger documentation run `swag init`.
+To run Client `go run client/client.go`
 
-You can build this programm on your platform by yourself or simply start it with "`go run main.go.`". The application opens a socket at the port 3000.
+## GRPC
 
-Swagger will be accessible at [localhost:3000/swagger](localhost:3000/swagger)
+### Setup
+
+- install `protobuf`
+- install `go get -u github.com/golang/protobuf/protoc-gen-go`
+- install `go get -u google.golang.org/grpc`
+
+- Install `go get -u github.com/jnewmano/grpc-json-proxy` [https://github.com/jnewmano/grpc-json-proxy#grpc-json-proxy](grpc-json-proxy)
