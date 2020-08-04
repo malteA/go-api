@@ -25,7 +25,13 @@ func (*carServiceServer) ListCars(ctx context.Context, request *emptypb.Empty) (
 	var cars []car.Car
 	db.Find(&cars)
 	var responseCars []*pb.GetCarResponse
-	responseCars = append(responseCars, &pb.GetCarResponse{Brand: ""})
+
+	for _, car := range cars {
+		responseCars = append(responseCars, &pb.GetCarResponse{
+			Brand: car.Brand,
+			Make:  car.Make,
+		})
+	}
 
 	response := &pb.ListCarsResponse{
 		Cars: responseCars,
